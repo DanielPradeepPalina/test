@@ -19,7 +19,6 @@ import {
 } from 'react-native-agora';
 import * as config from './config';
 import {Buffer} from 'buffer';
-import {EventEmitter} from 'events';
 
 const VideoCalls = () => {
   const agoraEngineRef = useRef<IRtcEngine>(); // Agora engine instance
@@ -32,7 +31,6 @@ const VideoCalls = () => {
   const [ordered, setOrdered] = useState<boolean>(false);
   const [data, setData] = useState<string>('');
   const [streamId, setStreamId] = useState<any>(undefined);
-  const ee = new EventEmitter();
 
   const showMessage = (msg: string) => {
     setMessage(msg);
@@ -41,9 +39,6 @@ const VideoCalls = () => {
   useEffect(() => {
     // Initialize Agora engine when the app starts
     setupVideoSDKEngine();
-    ee.on('onStreamMessage', (evt: any) => {
-      console.log(evt);
-    });
   });
 
   const setupVideoSDKEngine = async () => {
@@ -70,6 +65,58 @@ const VideoCalls = () => {
         onUserOffline: (_connection, Uid) => {
           showMessage('Remote user left the channel. uid: ' + Uid);
           setRemoteUid(0);
+        },
+        onStreamMessage: (
+          connection: RtcConnection,
+          remoteUid: number,
+          streamId: number,
+          data: Uint8Array,
+          length: number,
+          sentTs: number,
+        ) => {
+          console.info(
+            'onStreamMessage',
+            'connection',
+            connection,
+            'remoteUid',
+            remoteUid,
+            'streamId',
+            streamId,
+            'data',
+            data,
+            'length',
+            length,
+            'sentTs',
+            sentTs,
+          );
+          console.log(
+            `Receive from uid:${remoteUid}`,
+            `StreamId ${streamId}: ${data.toString()}`,
+          );
+        },
+        onStreamMessageError: (
+          connection: RtcConnection,
+          remoteUid: number,
+          streamId: number,
+          code: number,
+          missed: number,
+          cached: number,
+        ) => {
+          console.error(
+            'onStreamMessageError',
+            'connection',
+            connection,
+            'remoteUid',
+            remoteUid,
+            'streamId',
+            streamId,
+            'code',
+            code,
+            'missed',
+            missed,
+            'cached',
+            cached,
+          );
         },
       });
       agoraEngine.initialize({
@@ -134,60 +181,6 @@ const VideoCalls = () => {
   const sendMessage = () => {
     const buffer = Buffer.from(data);
     agoraEngineRef.current?.sendStreamMessage(streamId!, buffer, buffer.length);
-  };
-
-  const onStreamMessage = (
-    connection: RtcConnection,
-    remoteUid: number,
-    streamId: number,
-    data: Uint8Array,
-    length: number,
-    sentTs: number,
-  ) => {
-    console.info(
-      'onStreamMessage',
-      'connection',
-      connection,
-      'remoteUid',
-      remoteUid,
-      'streamId',
-      streamId,
-      'data',
-      data,
-      'length',
-      length,
-      'sentTs',
-      sentTs,
-    );
-    console.log(
-      `Receive from uid:${remoteUid}`,
-      `StreamId ${streamId}: ${data.toString()}`,
-    );
-  };
-
-  const onStreamMessageError = (
-    connection: RtcConnection,
-    remoteUid: number,
-    streamId: number,
-    code: number,
-    missed: number,
-    cached: number,
-  ) => {
-    console.error(
-      'onStreamMessageError',
-      'connection',
-      connection,
-      'remoteUid',
-      remoteUid,
-      'streamId',
-      streamId,
-      'code',
-      code,
-      'missed',
-      missed,
-      'cached',
-      cached,
-    );
   };
 
   return (
