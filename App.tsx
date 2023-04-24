@@ -25,7 +25,8 @@ function App(): JSX.Element {
       .then(res => {
         // console.log(res);
         config.default.token = res?.data?.token;
-        config.default.uid = res?.data?.uid;
+        // config.default.uid = res?.data?.uid;
+        config.default.channelId = res?.data?.channelName;
       })
       .catch(err => {
         console.log(err);

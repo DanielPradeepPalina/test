@@ -1,5 +1,5 @@
-const express = require("express");
-const cors = require("cors");
+const express = require('express');
+const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 9000;
 app.use(cors());
@@ -10,21 +10,21 @@ const {
   RtmTokenBuilder,
   RtcRole,
   RtmRole,
-} = require("agora-access-token");
-const { uuid } = require("uuidv4");
+} = require('agora-access-token');
+const {uuid} = require('uuidv4');
 
-app.get("/", (req, res) => {
-  res.json("HEllo");
+app.get('/', (req, res) => {
+  res.json('HEllo');
 });
 console.log(uuid());
 
-app.post("/getToken", async (req, res) => {
+app.post('/getToken', async (req, res) => {
   console.log(req.body);
-  const appId = "cdce489f622c47c7ab47108c2fd89ddd";
-  const appCertificate = "bfcdc244d41b417b917020dbde537920";
-  const channelName = "One";
+  const appId = 'cdce489f622c47c7ab47108c2fd89ddd';
+  const appCertificate = 'bfcdc244d41b417b917020dbde537920';
+  const channelName = 'test';
   const uid = uuid();
-  const userAccount = "User account";
+  const userAccount = 'User account';
   const role = RtmRole.Rtm_User;
   const expirationTimeInSeconds = 3600;
   const currentTimestamp = Math.floor(Date.now() / 1000);
@@ -34,13 +34,13 @@ app.post("/getToken", async (req, res) => {
     appId,
     appCertificate,
     channelName,
-    uid,
+    // uid,
     role,
-    privilegeExpiredTs
+    privilegeExpiredTs,
   );
-  console.log("Token with integer number Uid: " + tokenA);
+  console.log('Token with integer number Uid: ' + tokenA);
 
-  res.send({ token: tokenA, channelName, uid });
+  res.send({token: tokenA, channelName, uid});
 });
 
 app.listen(port, () => {

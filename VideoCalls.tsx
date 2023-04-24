@@ -1,5 +1,6 @@
 import React, {useRef, useState, useEffect} from 'react';
 import {
+  Button,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -50,13 +51,14 @@ const VideoCalls = () => {
       const agoraEngine = agoraEngineRef.current;
       agoraEngine.registerEventHandler({
         onJoinChannelSuccess: () => {
+          console.log('JOINED>>>>>');
           showMessage(
             'Successfully joined the channel ' + config.default.channelId,
           );
           setIsJoined(true);
         },
         onUserJoined: (_connection, Uid) => {
-          showMessage('Remote user joined with uid ' + config.default.uid);
+          showMessage('Remote user joined with uid ' + Uid);
           setRemoteUid(Uid);
           console.log(Uid);
         },
@@ -102,11 +104,11 @@ const VideoCalls = () => {
           clientRoleType: ClientRoleType.ClientRoleBroadcaster,
         },
       );
-      // const getStreamId = agoraEngineRef.current?.createDataStream({
-      //   syncWithAudio,
-      //   ordered,
-      // });
-      // setStreamId(getStreamId);
+      const getStreamId = agoraEngineRef.current?.createDataStream({
+        syncWithAudio,
+        ordered,
+      });
+      setStreamId(getStreamId);
     } catch (e) {
       console.log(e);
     }
@@ -222,6 +224,7 @@ const VideoCalls = () => {
       </ScrollView>
 
       <TextInput placeholder="enter text" value={data} onChangeText={setData} />
+      <Button title="send" onPress={() => sendMessage()} />
     </SafeAreaView>
   );
 };
