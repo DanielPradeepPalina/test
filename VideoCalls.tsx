@@ -19,6 +19,7 @@ import {
 } from 'react-native-agora';
 import * as config from './config';
 import {Buffer} from 'buffer';
+import {EventEmitter} from 'events';
 
 const VideoCalls = () => {
   const agoraEngineRef = useRef<IRtcEngine>(); // Agora engine instance
@@ -31,6 +32,7 @@ const VideoCalls = () => {
   const [ordered, setOrdered] = useState<boolean>(false);
   const [data, setData] = useState<string>('');
   const [streamId, setStreamId] = useState<any>(undefined);
+  const ee = new EventEmitter();
 
   const showMessage = (msg: string) => {
     setMessage(msg);
@@ -39,6 +41,9 @@ const VideoCalls = () => {
   useEffect(() => {
     // Initialize Agora engine when the app starts
     setupVideoSDKEngine();
+    ee.on('onStreamMessage', (evt: any) => {
+      console.log(evt);
+    });
   });
 
   const setupVideoSDKEngine = async () => {
