@@ -109,6 +109,7 @@ const VideoCalls = () => {
         ordered,
       });
       setStreamId(getStreamId);
+      console.log(getStreamId, 'ID>>>>>');
     } catch (e) {
       console.log(e);
     }
@@ -127,7 +128,7 @@ const VideoCalls = () => {
 
   const sendMessage = () => {
     const buffer = Buffer.from(data);
-    agoraEngineRef.current?.sendStreamMessage(1, buffer, buffer.length);
+    agoraEngineRef.current?.sendStreamMessage(streamId!, buffer, buffer.length);
   };
 
   const onStreamMessage = (
